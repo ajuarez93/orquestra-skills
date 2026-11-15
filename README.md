@@ -22,22 +22,37 @@ Sin el MCP, las skills se detienen y te lo dicen; no inventan un sustituto.
 
 ## Instalación
 
+### Como plugin (recomendado)
+
+```bash
+claude plugin marketplace add ajuarez93/orquestra-skills
+claude plugin install orquestra@orquestra-skills
+```
+
+O dentro de una sesión: `/plugin marketplace add ajuarez93/orquestra-skills` y luego `/plugin install orquestra@orquestra-skills`. Como plugin, el comando lleva el prefijo del plugin: `/orquestra:orquestra-spec`. Los marketplaces de terceros no se actualizan solos: corre `claude plugin update orquestra@orquestra-skills` o activa la actualización automática.
+
+### A mano
+
 ```bash
 git clone https://github.com/ajuarez93/orquestra-skills.git
 
-# Global (todos tus proyectos)
+# Global (todos tus proyectos); el comando queda como /orquestra-spec
 cp -r orquestra-skills/skills/orquestra-spec ~/.claude/skills/
 
 # Solo un proyecto
 cp -r orquestra-skills/skills/orquestra-spec <proyecto>/.claude/skills/
 ```
 
-También se puede instalar desde Orquestra con el MCP (`preview_skill` / `install_skill`, con `sourceRepo: ajuarez93/orquestra-skills` y `sourcePath: skills/orquestra-spec`).
+Para mantenerla al día, enlázala en vez de copiarla (`ln -s`).
+
+### Desde Orquestra
+
+Con el MCP: `preview_skill` / `install_skill` con `sourceRepo: ajuarez93/orquestra-skills` y `sourcePath: skills/orquestra-spec`.
 
 ## Uso
 
 ```
-/orquestra-spec <idea o folio>        # spec antes de código
+/orquestra-spec <idea o folio>        # spec antes de código (como plugin: /orquestra:orquestra-spec)
 /orquestra-spec drift <ruta o módulo> # contrastar un doc con el código
 ```
 

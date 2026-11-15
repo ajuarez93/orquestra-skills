@@ -1,0 +1,12 @@
+{
+  "name": "orquestra-skills",
+  "description": "Skills de Claude Code para trabajar con Orquestra.",
+  "owner": { "name": "Alfonso Juarez", "url": "https://github.com/ajuarez93" },
+  "plugins": [
+    {
+      "name": "orquestra",
+      "source": "./",
+      "description": "orquestra-spec: spec con criterios de aceptación antes de construir una tarea grande, y modo drift para contrastar docs con el código. Requiere el MCP de Orquestra."
+    }
+  ]
+}

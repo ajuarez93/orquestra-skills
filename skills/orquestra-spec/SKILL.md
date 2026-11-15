@@ -1,6 +1,6 @@
 ---
 name: orquestra-spec
-description: Spec antes de código con Orquestra (requiere el MCP de Orquestra). Úsala cuando el usuario pida especificar, diseñar o planear una tarea o idea grande (más de un día, multiplataforma, o que toque API, reglas de acceso o esquema de datos), o invoque /orquestra-spec. Redacta la spec como doc en Orquestra, la hace revisar en frío por un subagente sin contexto y, con el visto bueno del usuario, crea la tarea con checklist y verificaciones. Modo `drift`: compara un doc (CLAUDE.md, README, ficha de módulo) contra el código real. No la uses para bugs pequeños, ajustes visuales ni tareas de menos de un día.
+description: "Spec antes de código con Orquestra (requiere el MCP de Orquestra). Úsala cuando el usuario pida especificar, diseñar o planear una tarea o idea grande (más de un día, multiplataforma, o que toque API, reglas de acceso o esquema de datos), o invoque /orquestra-spec. Redacta la spec como doc en Orquestra, la hace revisar en frío por un subagente sin contexto y, con el visto bueno del usuario, crea la tarea con checklist y verificaciones. Modo `drift`: compara un doc (CLAUDE.md, README, ficha de módulo) contra el código real. No la uses para bugs pequeños, ajustes visuales ni tareas de menos de un día."
 version: 0.2.0
 ---
 
