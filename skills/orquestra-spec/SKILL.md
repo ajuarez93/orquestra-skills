@@ -18,17 +18,17 @@ Bugs pequeños, ajustes visuales, preguntas y tareas de menos de un día. Dilo e
 ## Modo spec: `/orquestra-spec <idea o folio>`
 
 1. **Contexto.** `get_project_context` una vez. Si viene un folio, `get_task`. Si viene una idea, `list_ideas` y busca duplicados con `search`.
-2. **Veredicto previo** (si es una idea): `go`, `needs-clarification` o `kill`, con una razón. Si no es `go`, **para y haz solo las preguntas que bloquean** (opciones cerradas cuando se pueda). Una idea que mezcla varias cosas se acota aquí a una sola.
+2. **Veredicto previo** (si es una idea): `go`, `needs-clarification` o `kill`, con una razón. Si no es `go`, **para y haz solo las preguntas que bloquean** (opciones cerradas cuando se pueda). Una idea que mezcla varias cosas se acota aquí a una sola. Si el origen es una idea, deja el veredicto en el campo con `update_idea` (`assessment`: `go` | `needs-clarification` | `kill`; `assessmentReason`: la razón en una línea) y actualízalo si cambia tras las preguntas; la API sella quién y cuándo.
 3. **Lee el código antes de redactar.** Basa la spec en lo que el código hace hoy; las referencias de una idea o tarea vieja suelen estar desfasadas. No inventes: lo que no verificaste, márcalo como no verificado.
-4. **Spec.** `create_doc` enlazado al origen (`relatedTo`) y al módulo, con:
+4. **Spec.** `create_doc` enlazado al origen (`relatedTo`) y al módulo, con `specStatus: 'borrador'`. El estado vive en ese campo: **no lo escribas en el encabezado del doc ni en el título** (se queda desactualizado); en el encabezado, solo fecha y origen. El doc lleva:
    - **Problema**: qué duele y a quién.
    - **Alcance**: incluye / no incluye.
    - **Criterios de aceptación**: cada uno verificable y con *cómo se comprueba*. Si un criterio depende de provocar un error o un estado raro, incluye un paso previo (spike) que confirme que se puede provocar.
    - **Preguntas abiertas**: lo que se decide en el plan, no en la spec.
    - **Plataformas afectadas**: para scope y paridad.
-5. **Revisión en frío (goldfish).** Lanza UN subagente nuevo cuyo prompt contenga **solo el texto de la spec**, sin tu conversación, y pídele, ordenados de más a menos grave y máximo 10: supuestos no escritos, criterios que no se pueden verificar, contradicciones, casos límite y qué falta para implementarla sin preguntar; sin elogios ni resumen. Corrige la spec con lo útil, y deja en el doc una sección "Revisión en frío" con los hallazgos y qué se hizo con cada uno. **Un solo ciclo**, salvo que el usuario pida otro (cuesta tokens). Reserva este paso para tareas multiplataforma o de contrato; en un bug de una sola plataforma bien entendido, basta la spec.
-6. **Visto bueno.** Pide al usuario aprobar la spec. Sin aprobación no se crea la tarea ni se escribe código. Al aprobarse, deja el doc marcado como aprobado.
-7. **Tarea.** Una tarea = un entregable (varias cosas = varias tareas; lo bloqueado o futuro va aparte). Con `list_modules` elige el módulo; pon `dueDate` con criterio real, tipo, prioridad, tags, stack, `estimatedDays` y scope por distribución si aplica; enlázala al doc con `relatedTo`.
+5. **Revisión en frío (goldfish).** Lanza UN subagente nuevo cuyo prompt contenga **solo el texto de la spec**, sin tu conversación, y pídele, ordenados de más a menos grave y máximo 10: supuestos no escritos, criterios que no se pueden verificar, contradicciones, casos límite y qué falta para implementarla sin preguntar; sin elogios ni resumen. Al lanzarla, pasa el doc a `specStatus: 'en_revision'` (`update_doc`); si el usuario pide otro ciclo de cambios, vuelve a `borrador`. Corrige la spec con lo útil, y deja en el doc una sección "Revisión en frío" con los hallazgos y qué se hizo con cada uno. **Un solo ciclo**, salvo que el usuario pida otro (cuesta tokens). Reserva este paso para tareas multiplataforma o de contrato; en un bug de una sola plataforma bien entendido, basta la spec.
+6. **Visto bueno.** Pide al usuario aprobar la spec. Sin aprobación no se crea la tarea ni se escribe código. Al aprobarse, `update_doc` con `specStatus: 'aprobada'` (sin renombrar el título ni tocar el encabezado).
+7. **Tarea.** Una tarea = un entregable (varias cosas = varias tareas; lo bloqueado o futuro va aparte). Con `list_modules` elige el módulo; pon `dueDate` con criterio real, tipo, prioridad, tags, stack, `estimatedDays` y scope por distribución si aplica; enlázala al doc con `relatedTo` y fija `specDocId` con el id del doc (la web y `list_tasks hasSpec` lo leen).
    - `checklist`: solo trabajo.
    - `verifications`: una por criterio de aceptación que **el usuario** prueba, con pasos concretos (qué abrir, qué hacer, qué se espera ver).
 8. **Después.** Mueve el estatus de uno en uno y nunca a "Listo" antes de que el usuario verifique. Rama, commits y PR van en los campos de la tarea cuando existan; no inventes valores. Si implementas tú, registra los hallazgos que la spec no previó (suelen venir de leer los llamadores del código que cambias).
@@ -40,6 +40,9 @@ Bugs pequeños, ajustes visuales, preguntas y tareas de menos de un día. Dilo e
 3. Entrega una tabla: afirmación | realidad | evidencia (archivo:línea o comando). Señala también lo que **no** pudiste verificar.
 4. Orquestra es la fuente de verdad: si un doc local quedó viejo, se corrige el doc, no al revés. No edites sin que el usuario lo pida; ofrece las correcciones.
 5. Cada desfase que sea trabajo real se registra como tarea en Orquestra de inmediato.
+
+## Si el MCP es anterior a 1.84.0
+Si `update_doc`, `update_idea` o `create_task` rechazan `specStatus`, `assessment` o `specDocId` por campo desconocido, sigue el flujo sin ellos (estado en el encabezado del doc, enlace solo con `relatedTo`) y dile al usuario en una línea que actualice el MCP (`npx orquestra-mcp setup`). Nunca te detengas por eso.
 
 ## Reglas
 - Pregunta al usuario solo cuando algo bloquea; si no, recomienda y avanza.
