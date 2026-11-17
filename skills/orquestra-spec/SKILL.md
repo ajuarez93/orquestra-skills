@@ -20,7 +20,7 @@ Bugs pequeños, ajustes visuales, preguntas y tareas de menos de un día. Dilo e
 1. **Contexto.** `get_project_context` una vez. Si viene un folio, `get_task`. Si viene una idea, `list_ideas` y busca duplicados con `search`.
 2. **Veredicto previo** (si es una idea): `go`, `needs-clarification` o `kill`, con una razón. Si no es `go`, **para y haz solo las preguntas que bloquean** (opciones cerradas cuando se pueda). Una idea que mezcla varias cosas se acota aquí a una sola. Si el origen es una idea, deja el veredicto en el campo con `update_idea` (`assessment`: `go` | `needs-clarification` | `kill`; `assessmentReason`: la razón en una línea) y actualízalo si cambia tras las preguntas; la API sella quién y cuándo.
 3. **Lee el código antes de redactar.** Basa la spec en lo que el código hace hoy; las referencias de una idea o tarea vieja suelen estar desfasadas. No inventes: lo que no verificaste, márcalo como no verificado.
-4. **Spec.** `create_doc` enlazado al origen (`relatedTo`) y al módulo, con `specStatus: 'borrador'`. El estado vive en ese campo: **no lo escribas en el encabezado del doc ni en el título** (se queda desactualizado); en el encabezado, solo fecha y origen. El doc lleva:
+4. **Spec.** `create_doc` con `type: 'spec'` (cae solo en la carpeta Specs), enlazado al origen (`relatedTo`) y al módulo, con `specStatus: 'borrador'`. El estado vive en ese campo: **no lo escribas en el encabezado del doc ni en el título** (se queda desactualizado); en el encabezado, solo fecha y origen. El doc lleva:
    - **Problema**: qué duele y a quién.
    - **Alcance**: incluye / no incluye.
    - **Criterios de aceptación**: cada uno verificable y con *cómo se comprueba*. Si un criterio depende de provocar un error o un estado raro, incluye un paso previo (spike) que confirme que se puede provocar.
@@ -41,8 +41,10 @@ Bugs pequeños, ajustes visuales, preguntas y tareas de menos de un día. Dilo e
 4. Orquestra es la fuente de verdad: si un doc local quedó viejo, se corrige el doc, no al revés. No edites sin que el usuario lo pida; ofrece las correcciones.
 5. Cada desfase que sea trabajo real se registra como tarea en Orquestra de inmediato.
 
-## Si el MCP es anterior a 1.84.0
-Si `update_doc`, `update_idea` o `create_task` rechazan `specStatus`, `assessment` o `specDocId` por campo desconocido, sigue el flujo sin ellos (estado en el encabezado del doc, enlace solo con `relatedTo`) y dile al usuario en una línea que actualice el MCP (`npx orquestra-mcp setup`). Nunca te detengas por eso.
+## Si el MCP es viejo
+Lo ideal es el MCP 1.85.0 o posterior. Con uno anterior, sigue el flujo y dile al usuario **una sola vez**, en una línea, que actualice el MCP (`npx orquestra-mcp setup`). Nunca te detengas por eso:
+- **Anterior a 1.85.0:** si `create_doc` rechaza `type: 'spec'` por valor no válido, reintenta sin `type` (el doc cae en la carpeta por defecto).
+- **Anterior a 1.84.0:** si `update_doc`, `update_idea` o `create_task` rechazan `specStatus`, `assessment` o `specDocId` por campo desconocido, sigue sin ellos (estado en el encabezado del doc, enlace solo con `relatedTo`).
 
 ## Reglas
 - Pregunta al usuario solo cuando algo bloquea; si no, recomienda y avanza.
