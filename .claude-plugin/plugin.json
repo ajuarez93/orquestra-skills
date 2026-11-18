@@ -1,6 +1,6 @@
 {
   "name": "orquestra",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "description": "Skills de Claude Code que trabajan con Orquestra y su servidor MCP: spec antes de código y contraste de documentos contra el código real.",
   "author": { "name": "Alfonso Juarez", "url": "https://github.com/ajuarez93" },
   "homepage": "https://github.com/ajuarez93/orquestra-skills",

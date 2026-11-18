@@ -8,7 +8,7 @@ Para skills de uso general (que no dependen de Orquestra) mira [claude-skills](h
 
 | Skill | Qué hace |
 |---|---|
-| [orquestra-spec](skills/orquestra-spec/) | Spec con criterios de aceptación **antes** de construir una tarea grande: veredicto previo de la idea (`go`, `needs-clarification` o `kill`), la spec como doc en Orquestra, revisión en frío por un subagente que no ve tu conversación, tu aprobación, y la tarea creada con checklist y una verificación por criterio. Incluye el modo `drift`, que contrasta un doc (CLAUDE.md, README, ficha de módulo) con el código real. |
+| [orquestra-spec](skills/orquestra-spec/) | Spec con criterios de aceptación **antes** de construir una tarea grande: veredicto previo de la idea (`go`, `needs-clarification` o `kill`), la spec como doc en Orquestra, revisión en frío por un subagente que no ve tu conversación, tu aprobación, y la tarea creada con checklist y una verificación por criterio. Incluye el modo `drift`, que contrasta un doc (CLAUDE.md, README, ficha de módulo) o las convenciones del proyecto con el código real. |
 
 ## Requisitos
 
@@ -54,6 +54,7 @@ Con el MCP: `preview_skill` / `install_skill` con `sourceRepo: ajuarez93/orquest
 ```
 /orquestra-spec <idea o folio>        # spec antes de código (como plugin: /orquestra:orquestra-spec)
 /orquestra-spec drift <ruta o módulo> # contrastar un doc con el código
+/orquestra-spec drift convenciones web # revisar que el código cumpla las convenciones
 ```
 
 Se usa para tareas de más de un día, multiplataforma o que tocan API, reglas de acceso o esquema de datos. En bugs pequeños y ajustes visuales no aplica.

@@ -1,7 +1,7 @@
 ---
 name: orquestra-spec
-description: "Spec antes de código con Orquestra (requiere el MCP de Orquestra). Úsala cuando el usuario pida especificar, diseñar o planear una tarea o idea grande (más de un día, multiplataforma, o que toque API, reglas de acceso o esquema de datos), o invoque /orquestra-spec. Redacta la spec como doc en Orquestra, la hace revisar en frío por un subagente sin contexto y, con el visto bueno del usuario, crea la tarea con checklist y verificaciones. Modo `drift`: compara un doc (CLAUDE.md, README, ficha de módulo) contra el código real. No la uses para bugs pequeños, ajustes visuales ni tareas de menos de un día."
-version: 0.2.0
+description: "Spec antes de código con Orquestra (requiere el MCP de Orquestra). Úsala cuando el usuario pida especificar, diseñar o planear una tarea o idea grande (más de un día, multiplataforma, o que toque API, reglas de acceso o esquema de datos), o invoque /orquestra-spec. Redacta la spec como doc en Orquestra, la hace revisar en frío por un subagente sin contexto y, con el visto bueno del usuario, crea la tarea con checklist y verificaciones. Modo `drift`: compara un doc (CLAUDE.md, README, ficha de módulo) o las convenciones del proyecto contra el código real. No la uses para bugs pequeños, ajustes visuales ni tareas de menos de un día."
+version: 0.3.0
 ---
 
 # orquestra-spec
@@ -41,8 +41,19 @@ Bugs pequeños, ajustes visuales, preguntas y tareas de menos de un día. Dilo e
 4. Orquestra es la fuente de verdad: si un doc local quedó viejo, se corrige el doc, no al revés. No edites sin que el usuario lo pida; ofrece las correcciones.
 5. Cada desfase que sea trabajo real se registra como tarea en Orquestra de inmediato.
 
+## Modo drift de convenciones: `/orquestra-spec drift convenciones [distribución]`
+
+Las convenciones son docs `type: 'convention'` de Orquestra: reglas que los agentes reciben antes de escribir código. Este modo revisa que el código las siga cumpliendo.
+
+1. **Lee las reglas.** `get_coding_context` con la distribución que se pidió (`distributionIds`, id de `list_distributions`; si el usuario da un nombre como "web", resuélvelo ahí). Sin distribución, revisa solo las de todo el proyecto. Si algo sale en `truncated`, léelo completo con `get_doc` o `get_knowledge`. Los ADR y docs de API que trae la respuesta no se revisan aquí.
+2. **Clasifica cada regla.** Es *verificable* si se comprueba con grep, la existencia de un archivo o un comando acotado (por ejemplo "nunca `toISOString()`", "toda página nueva con `lazy()`", "`createNotification` con `await`"). Las de criterio o proceso ("revisa en dispositivo físico", "comentarios que explican el porqué") son *no verificables*: márcalas así, no las fuerces.
+3. **Comprueba en el repo de esa distribución.** Una búsqueda acotada por regla (`head`, `grep -c`, rutas concretas). Busca violaciones, no confirmaciones: una regla se cumple si no aparece ningún caso que la rompa. Distingue el código vivo de tests, comentarios e historia.
+4. **Entrega una tabla** regla | realidad (cumple / no cumple / no verificable) | evidencia (`archivo:línea` o el comando usado), agrupada por convención. Al final, la sección **Orphans**: las convenciones que `get_coding_context` devolvió en `orphans` (su distribución ya no existe), aunque la lista esté vacía.
+5. **Qué hacer con un desfase.** Si el código rompe una regla vigente, es trabajo real: tarea en Orquestra de inmediato. Si la regla quedó vieja (el equipo ya decidió otra cosa), propón editar la convención con `update_doc`; no la cambies sin que el usuario lo pida.
+
 ## Si el MCP es viejo
-Lo ideal es el MCP 1.85.0 o posterior. Con uno anterior, sigue el flujo y dile al usuario **una sola vez**, en una línea, que actualice el MCP (`npx orquestra-mcp setup`). Nunca te detengas por eso:
+Lo ideal es el MCP 1.87.0 o posterior. Con uno anterior, sigue el flujo y dile al usuario **una sola vez**, en una línea, que actualice el MCP (`npx orquestra-mcp setup`). Nunca te detengas por eso; la única excepción es la de abajo:
+- **Anterior a 1.87.0:** no existe `get_coding_context`, así que el modo drift de convenciones no puede leer las reglas. Dilo y ofrece el modo drift normal sobre un CLAUDE.md.
 - **Anterior a 1.85.0:** si `create_doc` rechaza `type: 'spec'` por valor no válido, reintenta sin `type` (el doc cae en la carpeta por defecto).
 - **Anterior a 1.84.0:** si `update_doc`, `update_idea` o `create_task` rechazan `specStatus`, `assessment` o `specDocId` por campo desconocido, sigue sin ellos (estado en el encabezado del doc, enlace solo con `relatedTo`).
 
